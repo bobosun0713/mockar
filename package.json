@@ -13,8 +13,9 @@
     "zip:firefox": "wxt zip -b firefox",
     "compile": "tsc --noEmit",
     "format": "prettier --write '!(package|pnpm-lock).*' --ignore-unknown",
-    "lint": "eslint .",
-    "lint:fix": "eslint . --fix",
+    "format:all": "pnpm run format .",
+    "lint": "eslint --fix",
+    "lint:all": "pnpm run lint .",
     "postinstall": "wxt prepare",
     "prepare": "husky || true"
   },
@@ -51,7 +52,7 @@
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,mjs,cjs}": [
-      "pnpm run lint:fix",
+      "pnpm run lint",
       "pnpm run format"
     ],
     "*.{css,md,json}": [
