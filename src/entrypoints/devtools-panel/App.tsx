@@ -3,13 +3,14 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 
 const theme = createTheme({
   colorSchemes: {
+    light: true,
     dark: true
   }
 });
 
 function App() {
   return (
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} defaultMode="light">
       <CssBaseline></CssBaseline>
     </ThemeProvider>
   );
