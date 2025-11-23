@@ -9,7 +9,6 @@ function ThemeButton() {
 
   return (
     <Tooltip
-      title={isDarkMode ? "Light mode" : "Dark mode"}
       enterDelay={500}
       slotProps={{
         popper: {
@@ -23,6 +22,7 @@ function ThemeButton() {
           ]
         }
       }}
+      title={isDarkMode ? "Light mode" : "Dark mode"}
     >
       <IconButton
         size="medium"

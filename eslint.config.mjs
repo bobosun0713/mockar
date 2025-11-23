@@ -90,6 +90,15 @@ export default defineConfig([
       // https://legacy.reactjs.org/blog/2020/09/22/introducing-the-new-jsx-transform.html#eslint
       "react/react-in-jsx-scope": "off",
       "react/jsx-uses-react": "off",
+      "react/jsx-sort-props": [
+        "error",
+        {
+          callbacksLast: true,
+          shorthandFirst: true,
+          ignoreCase: true,
+          reservedFirst: true
+        }
+      ],
 
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-import-type-side-effects": "error",

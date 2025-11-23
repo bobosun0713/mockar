@@ -12,7 +12,7 @@ const theme = createTheme({
 
 function App() {
   return (
-    <ThemeProvider theme={theme} defaultMode="light">
+    <ThemeProvider defaultMode="light" theme={theme}>
       <CssBaseline></CssBaseline>
       <Header></Header>
     </ThemeProvider>

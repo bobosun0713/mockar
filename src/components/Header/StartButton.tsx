@@ -7,7 +7,6 @@ function StartButton() {
 
   return (
     <Tooltip
-      title={start ? "Disable extension" : "Enable extension"}
       enterDelay={500}
       slotProps={{
         popper: {
@@ -21,6 +20,7 @@ function StartButton() {
           ]
         }
       }}
+      title={start ? "Disable extension" : "Enable extension"}
     >
       <IconButton
         sx={{

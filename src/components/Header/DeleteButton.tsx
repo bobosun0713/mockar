@@ -4,7 +4,6 @@ import { IconButton, Tooltip } from "@mui/material";
 function DeleteButton() {
   return (
     <Tooltip
-      title="Delete All"
       enterDelay={500}
       slotProps={{
         popper: {
@@ -18,6 +17,7 @@ function DeleteButton() {
           ]
         }
       }}
+      title="Delete All"
     >
       <IconButton sx={{ color: "white" }}>
         <DeleteSweep></DeleteSweep>

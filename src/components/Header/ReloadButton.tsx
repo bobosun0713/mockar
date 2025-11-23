@@ -4,7 +4,6 @@ import { IconButton, Tooltip } from "@mui/material";
 function ReloadButton() {
   return (
     <Tooltip
-      title="Refresh Extension"
       enterDelay={500}
       slotProps={{
         popper: {
@@ -18,6 +17,7 @@ function ReloadButton() {
           ]
         }
       }}
+      title="Refresh Extension"
     >
       <IconButton
         sx={{ color: "white" }}
