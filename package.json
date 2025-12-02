@@ -26,7 +26,8 @@
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
     "react": "^19.1.1",
-    "react-dom": "^19.1.1"
+    "react-dom": "^19.1.1",
+    "react-hook-form": "^7.67.0"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
