@@ -100,9 +100,19 @@ export default defineConfig([
         }
       ],
 
+      "@typescript-eslint/no-unsafe-argument": "off",
+      "@typescript-eslint/no-unsafe-call": "off",
       "@typescript-eslint/no-non-null-assertion": "off",
       "@typescript-eslint/no-import-type-side-effects": "error",
-      "@typescript-eslint/no-unused-vars": ["error", { varsIgnorePattern: "^_" }]
+      "@typescript-eslint/no-unused-vars": ["error", { varsIgnorePattern: "^_" }],
+      "@typescript-eslint/no-misused-promises": [
+        "error",
+        {
+          checksVoidReturn: {
+            attributes: false
+          }
+        }
+      ]
     },
     settings: {
       react: {
