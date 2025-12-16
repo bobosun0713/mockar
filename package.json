@@ -20,11 +20,15 @@
     "prepare": "husky || true"
   },
   "dependencies": {
+    "@codemirror/lang-json": "^6.0.2",
+    "@codemirror/lint": "^6.9.2",
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fontsource/roboto": "^5.2.8",
     "@mui/icons-material": "^7.3.5",
     "@mui/material": "^7.3.5",
+    "@uiw/codemirror-theme-vscode": "^4.25.4",
+    "@uiw/react-codemirror": "^4.25.4",
     "json-edit-react": "^1.29.0",
     "react": "^19.1.1",
     "react-dom": "^19.1.1",
