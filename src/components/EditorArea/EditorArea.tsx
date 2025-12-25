@@ -1,6 +1,7 @@
-import { FormProvider, useForm } from "react-hook-form";
+import { FormProvider, useFieldArray, useForm } from "react-hook-form";
 
 import type { EditorFormData } from "./EditorArea.types";
+import EditorItem from "./EditorItem";
 
 function EditorArea() {
   const methods = useForm<EditorFormData>({
@@ -25,7 +26,15 @@ function EditorArea() {
     }
   });
 
-  return <FormProvider {...methods}></FormProvider>;
+  const { fields } = useFieldArray({ control: methods.control, name: "items" });
+
+  return (
+    <FormProvider {...methods}>
+      {fields.map((field, index) => (
+        <EditorItem key={field.id} index={index}></EditorItem>
+      ))}
+    </FormProvider>
+  );
 }
 
 export default EditorArea;

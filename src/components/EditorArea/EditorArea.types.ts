@@ -26,3 +26,16 @@ export interface EditorItemData extends Omit<ResponseItem, "response"> {
 export interface EditorFormData {
   items: EditorItemData[];
 }
+
+export interface EditorItemProps {
+  index?: number;
+}
+
+export interface EditorTabProps {
+  children?: React.ReactNode;
+  index?: number;
+}
+
+export interface EditorTabPanelProps extends EditorTabProps {
+  value?: number;
+}
