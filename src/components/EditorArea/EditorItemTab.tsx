@@ -101,7 +101,7 @@ function EditorTab({ index = 0 }: EditorTabProps) {
 
     setValue(
       `items.${index}.activeResponseName`,
-      fields[currentResponseIndex === 0 ? 0 : currentResponseIndex - 1].name
+      getValues(`items.${index}.responseList.${currentResponseIndex === 0 ? 0 : currentResponseIndex - 1}.name`)
     );
   };
 
@@ -130,11 +130,6 @@ function EditorTab({ index = 0 }: EditorTabProps) {
     // eslint-disable-next-line react-hooks/set-state-in-effect
     handleSelectResponse();
   }, [activeResponseName]);
-
-  useEffect(() => {
-    const curFieldIndex = fields.length === 1 ? 0 : fields.length - 1;
-    setValue(`items.${index}.activeResponseName`, fields[curFieldIndex].name);
-  }, [fields]);
 
   return (
     <Box>
