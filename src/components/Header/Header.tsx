@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DarkMode, DeleteSweep, Menu, PlayArrow, Replay, Stop, Sunny } from "@mui/icons-material";
+import { Add, DarkMode, DeleteSweep, Menu, PlayArrow, Replay, Stop, Sunny } from "@mui/icons-material";
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { orange, red } from "@mui/material/colors";
 import { useColorScheme } from "@mui/material/styles";
@@ -79,6 +79,12 @@ function Header(props: HeaderProps) {
             }}
           >
             {start ? <Stop sx={{ color: red["600"] }}></Stop> : <PlayArrow></PlayArrow>}
+          </IconButton>
+        </Tooltip>
+
+        <Tooltip title="Create new mock">
+          <IconButton>
+            <Add sx={{ color: "white" }}></Add>
           </IconButton>
         </Tooltip>
       </Box>
