@@ -1,21 +1,13 @@
 import { useState } from "react";
 import { ArrowDropDown, ArrowDropUp } from "@mui/icons-material";
-import { Chip, Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import { Collapse, List, ListItem, ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
 
-import type { MethodColor } from "@/types/network";
+import MethodChip from "../MethodChip";
 
 import SidebarItemMenu from "./SidebarItemMenu";
 
 function SidebarItem() {
   const [open, setOpen] = useState(true);
-
-  const methodColor: MethodColor = {
-    GET: "success",
-    POST: "warning",
-    PUT: "secondary",
-    PATCH: "info",
-    DELETE: "error"
-  };
 
   return (
     <>
@@ -32,7 +24,7 @@ function SidebarItem() {
         <List disablePadding>
           <ListItem secondaryAction={<SidebarItemMenu />} sx={{ pl: 4 }}>
             <ListItemIcon>
-              <Chip color={methodColor.GET} label="GET" size="small"></Chip>
+              <MethodChip method="GET" size="small"></MethodChip>
             </ListItemIcon>
             <ListItemText> /users</ListItemText>
           </ListItem>

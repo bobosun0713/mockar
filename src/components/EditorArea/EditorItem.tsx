@@ -3,7 +3,6 @@ import { Controller, useFormContext } from "react-hook-form";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Box,
-  Chip,
   Collapse,
   Divider,
   FormControl,
@@ -17,7 +16,9 @@ import {
   TextField
 } from "@mui/material";
 
-import type { EditorFormData, EditorItemProps, MethodColor } from "./EditorArea.types";
+import MethodChip from "../MethodChip";
+
+import type { EditorFormData, EditorItemProps } from "./EditorArea.types";
 import EditorItemTab from "./EditorItemTab";
 
 function EditorItem({ index = 0 }: EditorItemProps) {
@@ -30,14 +31,6 @@ function EditorItem({ index = 0 }: EditorItemProps) {
     watch,
     formState: { errors }
   } = useFormContext<EditorFormData>();
-
-  const methodColor: MethodColor = {
-    GET: "success",
-    POST: "warning",
-    PUT: "secondary",
-    PATCH: "info",
-    DELETE: "error"
-  };
 
   watch([`items.${index}.label`, `items.${index}.method`]);
 
@@ -72,11 +65,7 @@ function EditorItem({ index = 0 }: EditorItemProps) {
                 justifyContent: "space-around"
               }}
             >
-              <Chip
-                color={methodColor[getValues(`items.${index}.method`)]}
-                label={getValues(`items.${index}.method`)}
-                sx={{ minWidth: "fit-content" }}
-              ></Chip>
+              <MethodChip method={getValues(`items.${index}.method`)}></MethodChip>
 
               <Box>{getValues(`items.${index}.requestCount`)}</Box>
 
