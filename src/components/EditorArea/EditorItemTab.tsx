@@ -236,6 +236,8 @@ function EditorTab({ index = 0 }: EditorTabProps) {
       <EditorTabPanel index={0} value={tab}>
         <CodeMirror
           extensions={[json(), linter(jsonParseLinter()), lintGutter()]}
+          height="400px"
+          maxHeight="400px"
           theme={vscodeDark}
           value={responseBody}
           onChange={setResponseBody}
@@ -245,6 +247,8 @@ function EditorTab({ index = 0 }: EditorTabProps) {
       <EditorTabPanel index={1} value={tab}>
         <CodeMirror
           extensions={[json(), linter(jsonParseLinter()), lintGutter()]}
+          height="400px"
+          maxHeight="400px"
           theme={vscodeDark}
           value={requestPayload}
           onChange={val => {
