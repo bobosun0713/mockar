@@ -9,13 +9,32 @@ interface MockState extends MockData {
 }
 
 const addProject = (mocks: MockProjectItem[], projectName: string) => {
-  mocks.push({ name: projectName, items: [] });
+  mocks.unshift({
+    name: projectName,
+    items: [
+      {
+        url: "/mock",
+        label: "",
+        method: "GET",
+        status: "200",
+        delay: "50",
+        enabled: true,
+        requestCount: 0,
+        requestPayload: "{}",
+        responseList: [
+          { name: "New Response 1", method: "GET", status: "200", delay: "10", response: `{ "data": {} }` }
+        ],
+        responseName: "New Response 1",
+        activeResponseName: "New Response 1"
+      }
+    ]
+  });
   return mocks;
 };
 
 const addProjectItem = (mocks: MockProjectItem[], mockName: string, val: MockResponseItem) => {
   return mocks.map(mock => {
-    if (mock.name === mockName) mock.items.push(val);
+    if (mock.name === mockName) mock.items.unshift(val);
     return mock;
   });
 };
@@ -34,25 +53,24 @@ const addItemResponse = (mocks: MockProjectItem[], mockName: string, url: string
 
 export const useMockStore = create<MockState>(set => ({
   mocks: [],
-
   setProject(projectName: string) {
     set(state => ({
       ...state,
-      projects: addProject(state.mocks, projectName)
+      mocks: addProject(state.mocks, projectName)
     }));
   },
 
   setProjectItem(name: string, val: MockResponseItem) {
     set(state => ({
       ...state,
-      projects: addProjectItem(state.mocks, name, val)
+      mocks: addProjectItem(state.mocks, name, val)
     }));
   },
 
   setItemResponse(name: string, url: string, val: MockResponse) {
     set(state => ({
       ...state,
-      projects: addItemResponse(state.mocks, name, url, val)
+      mocks: addItemResponse(state.mocks, name, url, val)
     }));
   }
 }));
