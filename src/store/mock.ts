@@ -3,9 +3,11 @@ import { create } from "zustand";
 import type { MockData, MockProjectItem, MockResponse, MockResponseItem } from "@/types/mock";
 
 interface MockState extends MockData {
+  selectedMockProject: string;
   setProject: (projectName: string) => void;
   setProjectItem: (mockName: string, val: MockResponseItem) => void;
   setItemResponse: (mockName: string, url: string, val: MockResponse) => void;
+  setSelectedMockProject: (mockProjectName: string) => void;
 }
 
 const addProject = (mocks: MockProjectItem[], projectName: string) => {
@@ -53,10 +55,12 @@ const addItemResponse = (mocks: MockProjectItem[], mockName: string, url: string
 
 export const useMockStore = create<MockState>(set => ({
   mocks: [],
+  selectedMockProject: "",
   setProject(projectName: string) {
     set(state => ({
       ...state,
-      mocks: addProject(state.mocks, projectName)
+      mocks: addProject(state.mocks, projectName),
+      selectedMockProject: projectName
     }));
   },
 
@@ -71,6 +75,13 @@ export const useMockStore = create<MockState>(set => ({
     set(state => ({
       ...state,
       mocks: addItemResponse(state.mocks, name, url, val)
+    }));
+  },
+
+  setSelectedMockProject(name: string) {
+    set(state => ({
+      ...state,
+      selectedMockProject: name
     }));
   }
 }));
