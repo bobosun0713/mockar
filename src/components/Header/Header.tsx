@@ -4,17 +4,21 @@ import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { orange, red } from "@mui/material/colors";
 import { useColorScheme } from "@mui/material/styles";
 
+import { useMockStore } from "@/store/mock";
+
 interface HeaderProps {
   onToggleSidebar?: () => void;
 }
 
-function Header(props: HeaderProps) {
-  const { onToggleSidebar } = props;
-
+function Header({ onToggleSidebar }: HeaderProps) {
   const [start, setStart] = useState(false);
   const { mode, setMode } = useColorScheme();
 
   const isDarkMode = mode === "dark";
+
+  // Store
+  const setProjectItem = useMockStore(state => state.setProjectItem);
+  const hasMockList = useMockStore(state => state.mocks.length);
 
   return (
     <Box
@@ -82,11 +86,13 @@ function Header(props: HeaderProps) {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Create new mock">
-          <IconButton>
-            <Add sx={{ color: "white" }}></Add>
-          </IconButton>
-        </Tooltip>
+        {!!hasMockList && (
+          <Tooltip title="Create new mock">
+            <IconButton onClick={setProjectItem}>
+              <Add sx={{ color: "white" }}></Add>
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     </Box>
   );
