@@ -8,7 +8,8 @@ export interface MockResponse {
   delay: string;
 }
 
-export interface MockResponseItem extends Omit<MockResponse, "response"> {
+export interface MockResponseItem extends Omit<MockResponse, "response" | "name"> {
+  id: string;
   url: string;
   label: string;
   enabled: boolean;
