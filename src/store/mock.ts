@@ -13,6 +13,7 @@ interface MockState extends MockData {
   updateItem: (val: Partial<MockResponseItem>) => void;
   updateItemOrder: (id: string, type: ItemOrderType) => void;
   deleteItem: (id: string) => void;
+  deleteAllItems: () => void;
 }
 
 const mockResponseData = () => {
@@ -89,6 +90,13 @@ const deleteItem = (mocks: MockProjectItem[], projectName: string, id: string) =
   });
 };
 
+const deleteAllItems = (mocks: MockProjectItem[], projectName: string) => {
+  return mocks.map(mock => {
+    if (mock.name === projectName) return { ...mock, items: [] };
+    return mock;
+  });
+};
+
 export const useMockStore = create<MockState>(set => ({
   mocks: [],
   selectedMockProject: "",
@@ -140,6 +148,13 @@ export const useMockStore = create<MockState>(set => ({
     set(state => ({
       ...state,
       mocks: deleteItem(state.mocks, state.selectedMockProject, id)
+    }));
+  },
+
+  deleteAllItems() {
+    set(state => ({
+      ...state,
+      mocks: deleteAllItems(state.mocks, state.selectedMockProject)
     }));
   }
 }));
