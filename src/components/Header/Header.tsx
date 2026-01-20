@@ -3,6 +3,7 @@ import { Add, DarkMode, DeleteSweep, Menu, PlayArrow, Replay, Stop, Sunny } from
 import { Box, IconButton, Tooltip, Typography } from "@mui/material";
 import { orange, red } from "@mui/material/colors";
 import { useColorScheme } from "@mui/material/styles";
+import { useShallow } from "zustand/react/shallow";
 
 import { useMockStore } from "@/store/mock";
 
@@ -17,8 +18,13 @@ function Header({ onToggleSidebar }: HeaderProps) {
   const isDarkMode = mode === "dark";
 
   // Store
-  const setProjectItem = useMockStore(state => state.setProjectItem);
   const hasMockList = useMockStore(state => state.mocks.length);
+  const hasProjectList = useMockStore(
+    useShallow(state => state.mocks.find(mock => mock.name === state.selectedMockProject)?.items.length ?? false)
+  );
+
+  const setProjectItem = useMockStore(state => state.setProjectItem);
+  const deleteAllItems = useMockStore(state => state.deleteAllItems);
 
   return (
     <Box
@@ -55,12 +61,6 @@ function Header({ onToggleSidebar }: HeaderProps) {
           </IconButton>
         </Tooltip>
 
-        <Tooltip title="Delete All">
-          <IconButton sx={{ color: "white" }}>
-            <DeleteSweep></DeleteSweep>
-          </IconButton>
-        </Tooltip>
-
         <Tooltip title="Refresh Extension">
           <IconButton
             sx={{ color: "white" }}
@@ -72,8 +72,15 @@ function Header({ onToggleSidebar }: HeaderProps) {
           </IconButton>
         </Tooltip>
 
+        <Tooltip title="Delete All">
+          <IconButton disabled={!hasProjectList} sx={{ color: "white" }} onClick={deleteAllItems}>
+            <DeleteSweep></DeleteSweep>
+          </IconButton>
+        </Tooltip>
+
         <Tooltip title={start ? "Disable extension" : "Enable extension"}>
           <IconButton
+            disabled={!hasProjectList}
             sx={{
               outline: start ? `2px solid ${red["600"]}` : undefined,
               color: "white"
@@ -86,13 +93,11 @@ function Header({ onToggleSidebar }: HeaderProps) {
           </IconButton>
         </Tooltip>
 
-        {!!hasMockList && (
-          <Tooltip title="Create new mock">
-            <IconButton onClick={setProjectItem}>
-              <Add sx={{ color: "white" }}></Add>
-            </IconButton>
-          </Tooltip>
-        )}
+        <Tooltip title="Create new mock">
+          <IconButton disabled={!hasProjectList && !hasMockList} sx={{ color: "white" }} onClick={setProjectItem}>
+            <Add></Add>
+          </IconButton>
+        </Tooltip>
       </Box>
     </Box>
   );
