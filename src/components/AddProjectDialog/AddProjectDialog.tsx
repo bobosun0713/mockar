@@ -45,12 +45,13 @@ function AddProjectDialog({ open = false, onToggleAddDialog }: AddProjectDialogP
   return (
     <Dialog open={open}>
       <DialogTitle>Add Project</DialogTitle>
-      <DialogContent sx={{ width: 300 }}>
+      <DialogContent dividers sx={{ width: 300 }}>
         <TextField
           {...register("project")}
           fullWidth
           error={!!errors.project?.message}
           helperText={errors.project?.message}
+          placeholder="Project Name"
           size="small"
         ></TextField>
       </DialogContent>
