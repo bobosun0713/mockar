@@ -6,6 +6,8 @@ function ConfirmDialog({
   open = false,
   title = "Confirm Dialog",
   content = "Content...",
+  cancelText = "Cancel",
+  confirmText = "Confirm",
   onClose,
   onConfirm,
   ...otherProps
@@ -31,7 +33,7 @@ function ConfirmDialog({
           variant="text"
           onClick={handleCancel}
         >
-          Cancel
+          {cancelText}
         </Button>
 
         <Button
@@ -39,7 +41,7 @@ function ConfirmDialog({
           variant="text"
           onClick={handleConfirm}
         >
-          Confirm
+          {confirmText}
         </Button>
       </DialogActions>
     </Dialog>
