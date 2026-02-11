@@ -1,26 +1,26 @@
 import { create } from "zustand";
 
-import type { MockData, MockProjectItem, MockResponse, MockResponseItem } from "@/types/mock";
+import type { MockData, MockProjectItem, MockResponseItem } from "@/types/mock";
 
-type ItemOrderType = "UP" | "DOWN";
+type SortDirection = "UP" | "DOWN";
 
 interface MockState extends MockData {
-  selectedMockProject: string;
-  setProject: (projectName: string) => void;
-  setProjectItem: () => void;
-  setItemResponse: (mockName: string, url: string, val: MockResponse) => void;
-  setSelectedMockProject: (mockProjectName: string) => void;
-  updateItem: (val: Partial<MockResponseItem>) => void;
-  updateItemOrder: (id: string, type: ItemOrderType) => void;
-  deleteItem: (id: string) => void;
-  deleteAllItems: () => void;
+  selectedMock: string;
+  setMock: (mockName: string) => void;
+  setResponseItem: () => void;
+  setSelectedMock: (mockProjectName: string) => void;
+  updateResponse: (val: Partial<MockResponseItem>) => void;
+  updateMockOrder: (mockName: string, type: SortDirection) => void;
+  updateResponseOrder: (id: string, type: SortDirection) => void;
+  deleteMock: (mockName: string) => void;
+  deleteResponse: (id: string) => void;
+  deleteAllResponse: () => void;
 }
 
 const mockResponseData = () => {
   return {
     id: crypto.randomUUID(),
     url: "/mock",
-    label: "",
     method: "GET",
     status: "200",
     delay: "50",
@@ -33,44 +33,46 @@ const mockResponseData = () => {
   } as MockResponseItem;
 };
 
-const addProject = (mocks: MockProjectItem[], projectName: string) => {
+const addMock = (mocks: MockProjectItem[], mockName: string) => {
   mocks.unshift({
-    name: projectName,
+    name: mockName,
     items: [mockResponseData()]
   });
   return mocks;
 };
 
-const addProjectItem = (mocks: MockProjectItem[], projectName: string) => {
+const addResponseItem = (mocks: MockProjectItem[], mockName: string) => {
   return mocks.map(mock => {
-    if (mock.name === projectName) mock.items.unshift(mockResponseData());
+    if (mock.name === mockName) mock.items.unshift(mockResponseData());
     return mock;
   });
 };
 
-const addItemResponse = (mocks: MockProjectItem[], projectName: string, url: string, val: MockResponse) => {
+const updateResponse = (mocks: MockProjectItem[], mockName: string, val: Partial<MockResponseItem>) => {
   return mocks.map(mock => {
-    if (mock.name === projectName) {
-      const curItem = mock.items.find(i => i.url === url);
-      if (curItem) curItem.responseList = [...curItem.responseList, val];
-    }
-    return mock;
-  });
-};
-
-const updateItem = (mocks: MockProjectItem[], projectName: string, val: Partial<MockResponseItem>) => {
-  return mocks.map(mock => {
-    if (mock.name === projectName) {
+    if (mock.name === mockName) {
       const curItem = mock.items.find(item => item.id === val.id);
+      console.log("val ->", val);
       if (curItem) Object.assign(curItem, val);
     }
     return mock;
   });
 };
 
-const updateItemOrder = (mocks: MockProjectItem[], projectName: string, id: string, type: "UP" | "DOWN") => {
+const updateMockOrder = (mocks: MockProjectItem[], mockName: string, type: "UP" | "DOWN") => {
+  const findIdx = mocks.findIndex(mock => mock.name === mockName);
+
+  if (type === "UP" && findIdx !== 0) [mocks[findIdx - 1], mocks[findIdx]] = [mocks[findIdx], mocks[findIdx - 1]];
+
+  if (type === "DOWN" && findIdx < mocks.length - 1)
+    [mocks[findIdx], mocks[findIdx + 1]] = [mocks[findIdx + 1], mocks[findIdx]];
+
+  return mocks;
+};
+
+const updateResponseOrder = (mocks: MockProjectItem[], mockName: string, id: string, type: "UP" | "DOWN") => {
   return mocks.map(mock => {
-    if (mock.name === projectName) {
+    if (mock.name === mockName) {
       const findIdx = mock.items.findIndex(item => item.id === id);
       if (type === "UP" && findIdx !== 0)
         [mock.items[findIdx - 1], mock.items[findIdx]] = [mock.items[findIdx], mock.items[findIdx - 1]];
@@ -83,78 +85,89 @@ const updateItemOrder = (mocks: MockProjectItem[], projectName: string, id: stri
   });
 };
 
-const deleteItem = (mocks: MockProjectItem[], projectName: string, id: string) => {
+const deleteMock = (mocks: MockProjectItem[], mockName: string) => {
+  return mocks.filter(mock => mock.name !== mockName);
+};
+
+const deleteResponse = (mocks: MockProjectItem[], mockName: string, id: string) => {
   return mocks.map(mock => {
-    if (mock.name === projectName) return { ...mock, items: mock.items.filter(item => item.id !== id) };
+    if (mock.name === mockName) return { ...mock, items: mock.items.filter(item => item.id !== id) };
     return mock;
   });
 };
 
-const deleteAllItems = (mocks: MockProjectItem[], projectName: string) => {
+const deleteAllResponse = (mocks: MockProjectItem[], mockName: string) => {
   return mocks.map(mock => {
-    if (mock.name === projectName) return { ...mock, items: [] };
+    if (mock.name === mockName) return { ...mock, items: [] };
     return mock;
   });
 };
 
 export const useMockStore = create<MockState>(set => ({
   mocks: [],
-  selectedMockProject: "",
+  selectedMock: "",
 
-  setSelectedMockProject(name: string) {
+  setMock(name: string) {
     set(state => ({
       ...state,
-      selectedMockProject: name
+      mocks: addMock(state.mocks, name),
+      selectedMock: name
     }));
   },
 
-  setProject(projectName: string) {
+  setSelectedMock(name: string) {
     set(state => ({
       ...state,
-      mocks: addProject(state.mocks, projectName),
-      selectedMockProject: projectName
+      selectedMock: name
     }));
   },
 
-  setProjectItem() {
+  setResponseItem() {
     set(state => ({
       ...state,
-      mocks: addProjectItem(state.mocks, state.selectedMockProject)
+      mocks: addResponseItem(state.mocks, state.selectedMock)
     }));
   },
 
-  setItemResponse(name: string, url: string, val: MockResponse) {
+  updateResponse(val: Partial<MockResponseItem>) {
     set(state => ({
       ...state,
-      mocks: addItemResponse(state.mocks, name, url, val)
+      mocks: updateResponse(state.mocks, state.selectedMock, val)
     }));
   },
 
-  updateItem(val: Partial<MockResponseItem>) {
+  updateMockOrder(name: string, type: SortDirection) {
     set(state => ({
       ...state,
-      mocks: updateItem(state.mocks, state.selectedMockProject, val)
+      mocks: updateMockOrder(state.mocks, name, type)
     }));
   },
 
-  updateItemOrder(id: string, type: ItemOrderType) {
+  updateResponseOrder(id: string, type: SortDirection) {
     set(state => ({
       ...state,
-      mocks: updateItemOrder(state.mocks, state.selectedMockProject, id, type)
+      mocks: updateResponseOrder(state.mocks, state.selectedMock, id, type)
     }));
   },
 
-  deleteItem(id: string) {
+  deleteMock(name: string) {
     set(state => ({
       ...state,
-      mocks: deleteItem(state.mocks, state.selectedMockProject, id)
+      mocks: deleteMock(state.mocks, name)
     }));
   },
 
-  deleteAllItems() {
+  deleteResponse(id: string) {
     set(state => ({
       ...state,
-      mocks: deleteAllItems(state.mocks, state.selectedMockProject)
+      mocks: deleteResponse(state.mocks, state.selectedMock, id)
+    }));
+  },
+
+  deleteAllResponse() {
+    set(state => ({
+      ...state,
+      mocks: deleteAllResponse(state.mocks, state.selectedMock)
     }));
   }
 }));

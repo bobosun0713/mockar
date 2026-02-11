@@ -11,7 +11,6 @@ export interface MockResponse {
 export interface MockResponseItem extends Omit<MockResponse, "response" | "name"> {
   id: string;
   url: string;
-  label: string;
   enabled: boolean;
   requestCount: number;
   requestPayload: string;
