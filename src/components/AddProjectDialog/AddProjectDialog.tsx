@@ -7,7 +7,7 @@ import { useMockStore } from "@/store/mock";
 import type { AddProjectDialogProps, AddProjectForm } from "./AddProjectDialog.types";
 
 function AddProjectDialog({ open = false, onToggleAddDialog }: AddProjectDialogProps) {
-  const { mocks, setProject } = useMockStore();
+  const { mocks, setMock } = useMockStore();
 
   const {
     register,
@@ -34,7 +34,7 @@ function AddProjectDialog({ open = false, onToggleAddDialog }: AddProjectDialogP
       return;
     }
 
-    setProject(newProject);
+    setMock(newProject);
     onToggleAddDialog?.();
   };
 
