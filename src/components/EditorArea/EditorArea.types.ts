@@ -1,5 +1,7 @@
+import type { ReactNode } from "react";
 import type { ChipProps } from "@mui/material";
 
+import type { MockResponseItem } from "@/types/mock";
 import type { Method } from "@/types/network";
 
 export type MethodColor = Record<Method, ChipProps["color"]>;
@@ -13,6 +15,7 @@ export interface ResponseItem {
 }
 
 export interface EditorItemData extends Omit<ResponseItem, "response"> {
+  id: string;
   url: string;
   label: string;
   enabled: boolean;
@@ -28,14 +31,11 @@ export interface EditorFormData {
 }
 
 export interface EditorItemProps {
-  index?: number;
+  item: MockResponseItem;
 }
 
-export interface EditorTabProps {
-  children?: React.ReactNode;
+export interface EditorTabPanelProps {
   index?: number;
-}
-
-export interface EditorTabPanelProps extends EditorTabProps {
   value?: number;
+  children?: ReactNode;
 }

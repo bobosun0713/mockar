@@ -3,6 +3,7 @@ import { Box } from "@mui/material";
 import CssBaseline from "@mui/material/CssBaseline";
 import { ThemeProvider } from "@mui/material/styles";
 
+import AddProjectDialog from "@/components/AddProjectDialog";
 import EditorArea from "@/components/EditorArea";
 import Header from "@/components/Header";
 import Sidebar from "@/components/Sidebar";
@@ -10,6 +11,7 @@ import theme from "@/theme";
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
 
   return (
     <ThemeProvider defaultMode="light" theme={theme}>
@@ -29,13 +31,23 @@ function App() {
         ></Header>
 
         <Sidebar
-          isOpen={isSidebarOpen}
+          open={isSidebarOpen}
+          onToggleAddDialog={() => {
+            setIsAddDialogOpen(!isAddDialogOpen);
+          }}
           onToggleSidebar={() => {
             setIsSidebarOpen(!isSidebarOpen);
           }}
         ></Sidebar>
 
         <EditorArea></EditorArea>
+
+        <AddProjectDialog
+          open={isAddDialogOpen}
+          onToggleAddDialog={() => {
+            setIsAddDialogOpen(!isAddDialogOpen);
+          }}
+        ></AddProjectDialog>
       </Box>
     </ThemeProvider>
   );

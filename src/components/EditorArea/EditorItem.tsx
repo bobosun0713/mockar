@@ -1,10 +1,9 @@
-import { useState } from "react";
-import { Controller, useFormContext } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { Controller, FormProvider, useForm } from "react-hook-form";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import {
   Box,
   Collapse,
-  Divider,
   FormControl,
   Grid,
   IconButton,
@@ -16,23 +15,41 @@ import {
   TextField
 } from "@mui/material";
 
+import { useMockStore } from "@/store/mock";
+import type { MockResponseItem } from "@/types/mock";
+
 import MethodChip from "../MethodChip";
 
-import type { EditorFormData, EditorItemProps } from "./EditorArea.types";
+import type { EditorItemProps } from "./EditorArea.types";
 import EditorItemTab from "./EditorItemTab";
 
-function EditorItem({ index = 0 }: EditorItemProps) {
+function EditorItem({ item }: EditorItemProps) {
   const [open, setOpen] = useState(false);
+
+  // Store
+  const updateResponse = useMockStore(state => state.updateResponse);
+
+  // Form
+  const methods = useForm<MockResponseItem>({
+    defaultValues: item
+  });
 
   const {
     control,
     register,
     getValues,
-    watch,
-    formState: { errors }
-  } = useFormContext<EditorFormData>();
+    formState: { errors },
+    watch
+  } = methods;
 
-  watch([`items.${index}.label`, `items.${index}.method`]);
+  watch(["method", "requestCount"]);
+  const [url, enabled] = watch(["url", "enabled"]);
+
+  // Hooks
+  useEffect(() => {
+    const { id, ...values } = getValues();
+    updateResponse({ id, ...values });
+  }, [url, enabled]);
 
   return (
     <Paper elevation={1}>
@@ -44,19 +61,29 @@ function EditorItem({ index = 0 }: EditorItemProps) {
         }}
       >
         <Grid container spacing={2} sx={{ width: "100%", placeItems: "center", textAlign: "center" }}>
+          <Grid size={0.5}>
+            <IconButton
+              sx={{ padding: 0 }}
+              onClick={() => {
+                setOpen(!open);
+              }}
+            >
+              {open ? <ExpandLess></ExpandLess> : <ExpandMore></ExpandMore>}
+            </IconButton>
+          </Grid>
+
           <Grid component="span" size={9.5}>
             <TextField
               fullWidth
-              label={getValues(`items.${index}.label`) || "URL"}
               variant="standard"
-              {...register(`items.${index}.url`)}
+              {...register("url")}
               onDoubleClick={() => {
                 setOpen(!open);
               }}
             ></TextField>
           </Grid>
 
-          <Grid size={2.5}>
+          <Grid size={2}>
             <Box
               sx={{
                 display: "flex",
@@ -65,52 +92,40 @@ function EditorItem({ index = 0 }: EditorItemProps) {
                 justifyContent: "space-around"
               }}
             >
-              <MethodChip method={getValues(`items.${index}.method`)}></MethodChip>
+              <MethodChip method={getValues("method")}></MethodChip>
 
-              <Box>{getValues(`items.${index}.requestCount`)}</Box>
+              <Box>{getValues("requestCount")}</Box>
 
               <Controller
                 control={control}
-                name={`items.${index}.enabled`}
+                name={"enabled"}
                 render={({ field: { onChange, value } }) => <Switch checked={value} onChange={onChange}></Switch>}
               ></Controller>
-
-              <IconButton
-                onClick={() => {
-                  setOpen(!open);
-                }}
-              >
-                {open ? <ExpandLess></ExpandLess> : <ExpandMore></ExpandMore>}
-              </IconButton>
             </Box>
           </Grid>
         </Grid>
 
         <Collapse unmountOnExit in={open} sx={{ marginTop: 4 }} timeout={0}>
-          <Box>
+          <Box sx={{ mb: 2.5 }}>
             <Grid container spacing={2}>
-              <Grid size={3}>
-                <TextField fullWidth label="Label" size="small" {...register(`items.${index}.label`)}></TextField>
-              </Grid>
-
               <Grid size={3}>
                 <TextField
                   fullWidth
                   label="Response Names *"
                   size="small"
-                  {...register(`items.${index}.responseName`)}
-                  error={!!errors.items?.[index]?.responseName?.message}
-                  helperText={errors.items?.[index]?.responseName?.message}
+                  {...register("responseName")}
+                  error={!!errors.responseName?.message}
+                  helperText={errors.responseName?.message}
                 ></TextField>
               </Grid>
 
-              <Grid size={2}>
+              <Grid size={3}>
                 <FormControl fullWidth>
                   <InputLabel id="demo-multiple-chip-label">Method</InputLabel>
 
                   <Controller
                     control={control}
-                    name={`items.${index}.method`}
+                    name={"method"}
                     render={({ field }) => (
                       <Select {...field} label="Method" labelId="demo-multiple-chip-label" size="small">
                         <MenuItem value="GET">GET</MenuItem>
@@ -124,25 +139,19 @@ function EditorItem({ index = 0 }: EditorItemProps) {
                 </FormControl>
               </Grid>
 
-              <Grid size={2}>
-                <TextField fullWidth label="Status" size="small" {...register(`items.${index}.status`)}></TextField>
+              <Grid size={3}>
+                <TextField fullWidth label="Status" size="small" {...register("status")}></TextField>
               </Grid>
 
-              <Grid size={2}>
-                <TextField
-                  fullWidth
-                  label="Delay (ms)"
-                  size="small"
-                  type="number"
-                  {...register(`items.${index}.delay`)}
-                ></TextField>
+              <Grid size={3}>
+                <TextField fullWidth label="Delay (ms)" size="small" type="number" {...register("delay")}></TextField>
               </Grid>
             </Grid>
           </Box>
 
-          <Divider sx={{ my: 2.5 }}></Divider>
-
-          <EditorItemTab index={index}></EditorItemTab>
+          <FormProvider {...methods}>
+            <EditorItemTab></EditorItemTab>
+          </FormProvider>
         </Collapse>
       </Box>
     </Paper>

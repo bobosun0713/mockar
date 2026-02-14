@@ -4,33 +4,39 @@ import { json, jsonParseLinter } from "@codemirror/lang-json";
 import { linter, lintGutter } from "@codemirror/lint";
 import { AddCircleOutline, ContentCopy, DeleteOutline, FormatAlignLeft, Save } from "@mui/icons-material";
 import { Box, IconButton, MenuItem, Select, Tab, Tabs, Tooltip } from "@mui/material";
-import { vscodeDark } from "@uiw/codemirror-theme-vscode";
+import { useColorScheme } from "@mui/material/styles";
+import { basicDark, basicLight } from "@uiw/codemirror-theme-basic";
 import CodeMirror from "@uiw/react-codemirror";
 
-import type { EditorFormData, EditorTabPanelProps, EditorTabProps } from "./EditorArea.types";
+import { useMockStore } from "@/store/mock";
+import type { MockResponseItem } from "@/types/mock";
 
-function EditorTabPanel(props: EditorTabPanelProps) {
-  const { children, value, index, ...other } = props;
+import type { EditorTabPanelProps } from "./EditorArea.types";
 
+function EditorTabPanel({ index, value, children }: EditorTabPanelProps) {
   return (
-    <Box hidden={value !== index} sx={{ mt: 3 }} {...other}>
+    <Box hidden={value !== index} sx={{ mt: 3 }}>
       {children}
     </Box>
   );
 }
 
-function EditorTab({ index = 0 }: EditorTabProps) {
+function EditorTab() {
+  const { mode } = useColorScheme();
+
+  const isDarkMode = mode === "dark";
+
+  // Store
+  const updateResponse = useMockStore(state => state.updateResponse);
+
   // Form context
-  const { control, setValue, watch, getValues, setError, clearErrors } = useFormContext<EditorFormData>();
-  const { fields, append, update, remove } = useFieldArray({
+  const { control, setValue, watch, getValues, setError, clearErrors } = useFormContext<MockResponseItem>();
+  const { fields, update, remove, prepend } = useFieldArray({
     control,
-    name: `items.${index}.responseList`
+    name: "responseList"
   });
 
-  const [activeResponseName, requestPayload] = watch([
-    `items.${index}.activeResponseName`,
-    `items.${index}.requestPayload`
-  ]);
+  const [activeResponseName, requestPayload] = watch(["activeResponseName", "requestPayload"]);
 
   const activeResponseData = useMemo(() => {
     return fields.find(item => item.name === activeResponseName);
@@ -49,48 +55,51 @@ function EditorTab({ index = 0 }: EditorTabProps) {
   };
 
   const handleAddNewResponse = () => {
-    const { responseName, method, status, delay } = getValues(`items.${index}`);
+    const { id, ...values } = getValues();
 
-    if (fields.find(item => item.name === responseName) || !responseName.trim()) {
-      setError(`items.${index}.responseName`, {
-        message: responseName ? "Response name already exists" : "Required"
+    if (fields.find(item => item.name === values.responseName) || !values.responseName.trim()) {
+      setError("responseName", {
+        message: values.responseName ? "Response name already exists" : "Required"
       });
       return;
     }
 
-    clearErrors(`items.${index}.responseName`);
+    clearErrors("responseName");
 
-    append({ name: responseName, method, status, delay, response: `{ "data": {} }` });
-    setValue(`items.${index}.responseName`, responseName);
-    setValue(`items.${index}.activeResponseName`, responseName);
+    prepend({ ...values, name: values.responseName, response: `{ "data": {} }` });
+
+    setValue("responseName", values.responseName);
+    setValue("activeResponseName", values.responseName);
+
+    updateResponse({ id, ...values });
   };
 
   const handleSaveResponse = () => {
-    const { responseName, method, status, delay } = getValues(`items.${index}`);
+    const { id, ...values } = getValues();
     const currentResponseIndex = fields.findIndex(item => item.name === activeResponseName);
 
     if (currentResponseIndex === -1 || !activeResponseData) return;
 
-    if (!responseName.trim()) {
-      setError(`items.${index}.responseName`, { message: "Required" });
+    if (!values.responseName.trim()) {
+      setError("responseName", { message: "Required" });
       return;
     }
 
-    clearErrors(`items.${index}.responseName`);
+    clearErrors("responseName");
 
     update(currentResponseIndex, {
-      name: responseName,
-      method: method,
-      status: status,
-      delay: delay,
+      ...values,
+      name: values.responseName,
       response: responseBody
     });
 
-    setValue(`items.${index}.activeResponseName`, responseName);
+    setValue("activeResponseName", values.responseName);
+
+    updateResponse({ id, ...values });
   };
 
   const handleChangePayload = (val: string) => {
-    setValue(`items.${index}.requestPayload`, val);
+    setValue("requestPayload", val);
   };
 
   const handleDeleteResponse = () => {
@@ -100,8 +109,8 @@ function EditorTab({ index = 0 }: EditorTabProps) {
     remove(currentResponseIndex);
 
     setValue(
-      `items.${index}.activeResponseName`,
-      getValues(`items.${index}.responseList.${currentResponseIndex === 0 ? 0 : currentResponseIndex - 1}.name`)
+      "requestPayload",
+      getValues(`responseList.${currentResponseIndex === 0 ? 0 : currentResponseIndex - 1}.name`)
     );
   };
 
@@ -109,10 +118,10 @@ function EditorTab({ index = 0 }: EditorTabProps) {
     if (!activeResponseData) return;
 
     setResponseBody(activeResponseData.response);
-    setValue(`items.${index}.responseName`, activeResponseData.name);
-    setValue(`items.${index}.method`, activeResponseData.method);
-    setValue(`items.${index}.status`, activeResponseData.status);
-    setValue(`items.${index}.delay`, activeResponseData.delay);
+    setValue("responseName", activeResponseData.name);
+    setValue("method", activeResponseData.method);
+    setValue("status", activeResponseData.status);
+    setValue("delay", activeResponseData.delay);
   };
 
   const handleFormat = (val: string, fn: (val: string) => void) => {
@@ -164,7 +173,7 @@ function EditorTab({ index = 0 }: EditorTabProps) {
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Controller
               control={control}
-              name={`items.${index}.activeResponseName`}
+              name={"activeResponseName"}
               render={({ field }) => (
                 <Select {...field} size="small" sx={{ width: 350 }}>
                   {fields.map(field => (
@@ -238,7 +247,7 @@ function EditorTab({ index = 0 }: EditorTabProps) {
           extensions={[json(), linter(jsonParseLinter()), lintGutter()]}
           height="400px"
           maxHeight="400px"
-          theme={vscodeDark}
+          theme={isDarkMode ? basicDark : basicLight}
           value={responseBody}
           onChange={setResponseBody}
         ></CodeMirror>
@@ -249,7 +258,7 @@ function EditorTab({ index = 0 }: EditorTabProps) {
           extensions={[json(), linter(jsonParseLinter()), lintGutter()]}
           height="400px"
           maxHeight="400px"
-          theme={vscodeDark}
+          theme={isDarkMode ? basicDark : basicLight}
           value={requestPayload}
           onChange={val => {
             handleChangePayload(val);

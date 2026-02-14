@@ -23,18 +23,18 @@ function Header({ onToggleSidebar }: HeaderProps) {
   // Store
   const hasMockList = useMockStore(state => state.mocks.length);
   const hasProjectList = useMockStore(
-    useShallow(state => state.mocks.find(mock => mock.name === state.selectedMockProject)?.items.length ?? false)
+    useShallow(state => state.mocks.find(mock => mock.name === state.selectedMock)?.items.length ?? false)
   );
 
-  const setProjectItem = useMockStore(state => state.setProjectItem);
-  const deleteAllItems = useMockStore(state => state.deleteAllItems);
+  const setResponseItem = useMockStore(state => state.setResponseItem);
+  const deleteAllResponse = useMockStore(state => state.deleteAllResponse);
 
   const handleToggleDialog = () => {
     setOpen(!open);
   };
 
   const handleDeleteAll = () => {
-    deleteAllItems();
+    deleteAllResponse();
     handleToggleDialog();
   };
 
@@ -107,7 +107,7 @@ function Header({ onToggleSidebar }: HeaderProps) {
           </Tooltip>
 
           <Tooltip title="Create new mock">
-            <IconButton disabled={!hasProjectList && !hasMockList} sx={{ color: "white" }} onClick={setProjectItem}>
+            <IconButton disabled={!hasProjectList && !hasMockList} sx={{ color: "white" }} onClick={setResponseItem}>
               <Add></Add>
             </IconButton>
           </Tooltip>
