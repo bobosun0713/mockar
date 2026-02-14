@@ -2,7 +2,15 @@ import { useState } from "react";
 import { MoreVert } from "@mui/icons-material";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 
-function SidebarItemMenu() {
+import type { SidebarItemMenuProps } from "./Sidebar.types";
+
+function SidebarItemMenu({
+  index = 0,
+  itemsLength = 0,
+  onChangeOrderUp,
+  onChangeOrderDown,
+  onDelete
+}: SidebarItemMenuProps) {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [open, setOpen] = useState(false);
 
@@ -18,9 +26,11 @@ function SidebarItemMenu() {
       </IconButton>
 
       <Menu anchorEl={anchorEl} open={open} onClose={handleOpenMenu}>
-        <MenuItem>Delete</MenuItem>
-        <MenuItem>Move to top</MenuItem>
-        <MenuItem>Move to bottom</MenuItem>
+        <MenuItem onClick={onDelete}>Delete</MenuItem>
+
+        {index !== 0 && <MenuItem onClick={onChangeOrderUp}>Move to up</MenuItem>}
+
+        {index !== itemsLength - 1 && <MenuItem onClick={onChangeOrderDown}>Move to down</MenuItem>}
       </Menu>
     </>
   );
