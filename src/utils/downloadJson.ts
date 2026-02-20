@@ -1,4 +1,4 @@
-export function useDownloadJson(data: unknown, fileName = "data.json") {
+export function downloadJson(data: unknown, fileName = "data.json") {
   try {
     const jsonString = JSON.stringify(data, null, 2);
     const blob = new Blob([jsonString], { type: "application/json" });
@@ -18,4 +18,4 @@ export function useDownloadJson(data: unknown, fileName = "data.json") {
   }
 }
 
-export default useDownloadJson;
+export default downloadJson;
