@@ -15,6 +15,7 @@ interface MockState extends MockData {
   deleteMock: (mockName: string) => void;
   deleteResponse: (id: string) => void;
   deleteAllResponse: () => void;
+  importMock: (data: MockProjectItem[]) => void;
 }
 
 const mockResponseData = () => {
@@ -103,6 +104,12 @@ const deleteAllResponse = (mocks: MockProjectItem[], mockName: string) => {
   });
 };
 
+const importMock = (mocks: MockProjectItem[], selectedMock: string, data: MockProjectItem[]) => {
+  mocks = [...data];
+  selectedMock = mocks[0].name;
+  return { mocks, selectedMock };
+};
+
 export const useMockStore = create<MockState>(set => ({
   mocks: [],
   selectedMock: "",
@@ -169,6 +176,18 @@ export const useMockStore = create<MockState>(set => ({
       ...state,
       mocks: deleteAllResponse(state.mocks, state.selectedMock)
     }));
+  },
+
+  importMock(data: MockProjectItem[]) {
+    if (!data.every(val => Array.isArray(val.items) && val.name)) return;
+    set(state => {
+      const { mocks, selectedMock } = importMock(state.mocks, state.selectedMock, data);
+      return {
+        ...state,
+        mocks,
+        selectedMock
+      };
+    });
   }
 }));
 
